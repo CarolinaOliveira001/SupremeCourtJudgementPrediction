@@ -5,14 +5,13 @@ editor: source
 ---
 
 ```{r}
-1 + 1
+library(dplyr)
+library(data.table)
 ```
 
-You can add options to executable code like this
 
 ```{r}
-#| echo: false
-2 * 2
-```
+justice <- fread("justice.csv")
+justice$V1 <- data.frame(Index=justice$V1)
 
-The `echo: false` option disables the printing of code (only output is displayed).
+```
