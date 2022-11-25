@@ -11,88 +11,70 @@ library(rvest)
 library(rjson)
 ```
 
-
 ```{r}
 justice <- fread("justice.csv")
 justice$V1 <- data.frame(Index=justice$V1)
 ```
 
 ```{r}
-myData <- justice$href[1]
-myData
+detailedJustice <- data.frame(id = c(),
+                   name = c(),
+                   docket_number = c(),
+                   first_party = c(),
+                   second_party = c(),
+                   facts_of_the_case = c(),
+                   question = c(),
+                   conclusion = c(),
+                   advocate_name = c(),
+                   judges = c(),
+                   city = c(),
+                   province_name = c())
 ```
 
-
-
 ```{r}
-y <- c()
-helpFunction <- function(x) {
-  myData <- jsonlite::fromJSON(txt =x)
-  tryCatch({append(y, myData[c("ID", "name", "docket_number", "first_party", "second_party", "facts_of_the_case", "question", "conclusion", "advocates", "decided_by", "location", "description")])})
+isNullHelpFunction <- function(x){
+  if(is.null(x)){
+    "NA"} 
+  else {
+    x}
 }
 ```
 
 ```{r}
-df_c <- data.frame(ID = c("id"),
-                   Name = c("name"),
-                   Docket = c("docket_number"),
-                   first_party = c("first_party"),
-                   second_party = c("second_party"),
-                   facts_of_the_case = c("facts"),
-                   question = c("question"),
-                   conclusion = c("conclusion"),
-                   advocate_name = c("advocate_name"),
-                   judges = c("judges"),
-                   city = c("city"),
-                   province_name = c("province"),
-                   description = c("description"))
+hrefVector <- justice$href
+for (x in 1:length(hrefVector)) {
+  dataJson <- jsonlite::fromJSON(txt = hrefVector[x])
+
+  helpfulDF <- c(isNullHelpFunction(dataJson$ID), 
+                 isNullHelpFunction(dataJson$name), 
+                 isNullHelpFunction(dataJson$docket_number), 
+                 isNullHelpFunction(dataJson$first_party), 
+                 isNullHelpFunction(dataJson$second_party),
+                 isNullHelpFunction(dataJson$facts_of_the_case), 
+                 isNullHelpFunction(dataJson$question), 
+                 isNullHelpFunction(dataJson$conclusion), 
+                 paste(as.character(dataJson$advocates$advocate$name), collapse=", "), 
+                 paste(as.character(dataJson$decided_by$members$name), collapse=", "),
+                 isNullHelpFunction(dataJson$location$city), 
+                 isNullHelpFunction(dataJson$location$province_name))
+  
+  detailedJustice <- rbind(detailedJustice, helpfulDF)
+  
+  remove(helpfulDF)
+  remove(dataJson)
+}
 ```
 
 ```{r}
-textRef <- justice$href[1]
-myData <- jsonlite::fromJSON(txt = textRef)
-
-lawyers <- paste(as.character(myData$advocates$advocate$name), collapse=", ")
-judges <- paste(as.character(myData$decided_by$members$name), collapse=", ")
-
-
-d <- c(myData$ID, 
-       myData$name,
-       myData$docket_number,
-       myData$first_party,
-       myData$second_party,
-       myData$facts_of_the_case,
-       myData$question,
-       myData$conclusion,
-       lawyers,
-       judges,
-       myData$location$city,
-       myData$location$province_name,
-       myData$description)
+colnames(detailedJustice) <- c("id", "name", "docket_number", "first_party", "second_party",
+                               "facts_of_the_case", "question", "conclusion", 
+                               "advocate_name", "judges", "city", "province_name")
 ```
 
 ```{r}
 
-judges <- paste(as.character(myData$decided_by$members$name), collapse=", ")
-judges
 ```
 
 
 
-```{r}
-df_new <- rbind(df_c, d)
-```
-
-
-
-```{r}
-df <- head(justice, 2)
-```
-
-```{r}
-x <- sapply(df$href, helpFunction)
-```
-```{r}
-length(x)
-```
 

@@ -1,0 +1,6 @@
+We want to extract the following features: id, name, docket_number, first_party, second_party, facts, question, conclusion, lawyers, judges,city, province_name from the json files in the column href from the dataset justice.
+
+To solve the problem with the different dimensions^*, we will paste the name of each lawyer/judge separated by ",". By dimensions, I mean some cases have 2 lawyers, other had more. Though at each column it should be of the same dimension (in this case of length 1).
+
+Now after getting a new dataset with the previous features, it will be called detailedJustice. Then we will join it with the original dataset. We will get a big dataset with features.
+
