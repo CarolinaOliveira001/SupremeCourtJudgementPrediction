@@ -18,11 +18,7 @@ justice$V1 <- data.frame(Index=justice$V1)
 
 ```{r}
 detailedJustice <- data.frame(id = c(),
-                   name = c(),
                    docket_number = c(),
-                   first_party = c(),
-                   second_party = c(),
-                   facts_of_the_case = c(),
                    question = c(),
                    conclusion = c(),
                    advocate_name = c(),
@@ -45,12 +41,8 @@ hrefVector <- justice$href
 for (x in 1:length(hrefVector)) {
   dataJson <- jsonlite::fromJSON(txt = hrefVector[x])
 
-  helpfulDF <- c(isNullHelpFunction(dataJson$ID), 
-                 isNullHelpFunction(dataJson$name), 
-                 isNullHelpFunction(dataJson$docket_number), 
-                 isNullHelpFunction(dataJson$first_party), 
-                 isNullHelpFunction(dataJson$second_party),
-                 isNullHelpFunction(dataJson$facts_of_the_case), 
+  helpfulDF <- c(isNullHelpFunction(dataJson$ID),
+                 trimws(isNullHelpFunction(dataJson$docket_number), which = "r"),
                  isNullHelpFunction(dataJson$question), 
                  isNullHelpFunction(dataJson$conclusion), 
                  paste(as.character(dataJson$advocates$advocate$name), collapse=", "), 
@@ -66,14 +58,19 @@ for (x in 1:length(hrefVector)) {
 ```
 
 ```{r}
-colnames(detailedJustice) <- c("id", "name", "docket_number", "first_party", "second_party",
-                               "facts_of_the_case", "question", "conclusion", 
+colnames(detailedJustice) <- c("ID", "docket", "question", "conclusion", 
                                "advocate_name", "judges", "city", "province_name")
 ```
 
 ```{r}
-
+allJustice <- merge(x = justice, y = detailedJustice, by = c("ID", "docket"))
 ```
+
+```{r}
+write.csv(allJustice,"allJustice.csv", row.names = TRUE)
+```
+
+
 
 
 
