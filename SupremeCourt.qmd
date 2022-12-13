@@ -70,7 +70,55 @@ allJustice <- merge(x = justice, y = detailedJustice, by = c("ID", "docket"))
 write.csv(allJustice,"allJustice.csv", row.names = TRUE)
 ```
 
+```{r}
+allJustice <- fread("allJustice.csv")
+```
 
+```{r}
+mainDf <- allJustice %>% 
+  select(ID, facts, issue_area, first_party_winner) %>% 
+  na.omit()
+```
+
+```{r}
+table(mainDf$first_party_winner)
+```
+
+```{r}
+mainDf %>% mutate(is_blank_node = issue_area == "") %>% 
+  filter(is_blank_node == TRUE)
+```
+```{r}
+unique(mainDf$issue_area)
+```
+
+
+```{r}
+mainDf$issue_area <- factor(mainDf$issue_area,levels = c("Civil Rights", "Due Process", "First Amendment", "Criminal Procedure", "Privacy", "Federal Taxation", "Economic Activity", "Judicial Power", "Unions", "Federalism", "Attorneys", "Miscellaneous", "Interstate Relations", "Private Action"),labels = c(0:(length(unique(mainDf$issue_area)) - 2)))
+```
+
+```{r}
+calc_mode <- function(x){
+  distinct_values <- unique(x)
+
+  distinct_tabulate <- tabulate(match(x, distinct_values))
+  
+  distinct_values[which.max(distinct_tabulate)]
+}
+```
+
+```{r}
+mainDf <- mainDf %>% 
+  mutate(issue_area = if_else(is.na(issue_area), calc_mode(issue_area), issue_area))
+```
+
+```{r}
+mainDf$first_party_winner <- factor(mainDf$first_party_winner,levels = c(FALSE, TRUE),labels = c(0:(length(unique(mainDf$first_party_winner)) - 1)))
+```
+
+```{python}
+import nltk.stem
+```
 
 
 
