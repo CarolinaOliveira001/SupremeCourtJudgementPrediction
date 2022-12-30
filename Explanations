@@ -4,3 +4,6 @@ To solve the problem with the different dimensions^*, we will paste the name of 
 
 Now after getting a new dataset with the previous features, it will be called detailedJustice. Then we will join it with the original dataset. We will get a big dataset with features.
 
+
+https://radimrehurek.com/gensim/models/word2vec.html
+
